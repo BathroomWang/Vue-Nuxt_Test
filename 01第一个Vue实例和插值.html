@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>01第一个Vue实例和插值</title>
+    </head>
+    <body>
+        <!-- 第二步：定义一个画面上的容器，作为vue实例的使用容器 -->
+        <div id="app">
+            <!-- ! 双花括号 → 插值表达式 
+            插值表达式，支持数据引用，对象数据的内部属性，甚至是返回结果的表达式
+            注意点：插值表达式，不能再标签内部的属性中使用-->
+            <h2>{{message + '我是孟宪东！'}}</h2>
+            <p>{{msg02.toUpperCase()}}</p>
+            <p title="成年检查">{{age >= 20 ? '成年了！' : '未成年'}}</p>
+        </div>
+    </body>
+   
+    <!-- 第一步：引入vue2的包（导包）
+        vue2.x版本的开发环境版本，包含了完整的警告和调试模式 -->
+    <!-- 对于新人来说，不推荐通过CLI脚手架配置
+        而是这种import形式
+        个人理解：基于node的CLI配置，会同时配置前台网络，相当于分离式已经搭建 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.1.10/dist/vue.js"></script>
+
+    <script>
+        // 第三步：创建简介的对象渲染实例new Vue({})
+        const app = new Vue({
+            // el是挂载点，通过el选择器，指定这个vue实例管理的是哪个html容器以及内部   
+            el:'#app',
+            data: {
+                age:18,
+                message: ' 你好！' ,
+                msg02:'uppercase'
+            }
+        })
+    </script>
+
+</html>

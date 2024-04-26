@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>插值和响应式</title>
+    </head>
+    
+     <body>
+        <div id="app">
+            <!-- 何谓响应式？
+            !响应式，只要更改了数据，画面上渲染的结果也会跟着更新
+            无需再次操作dom元素
+            只要修改数据 →  页面就会相应这个变化，所以叫响应式 -->
+           <h2> {{message}} </h2> 
+            <br>
+            <!-- 展示对象的属性取用 -->
+            <span> {{school.address}} </span>
+            <!-- 展示数组的取用 -->
+            <hr>
+            嘉然今天吃什么？
+            <ul>
+                <li>{{food[0]}}</li>
+                <li>{{food[1]}} </li>
+                <li>{{food[2]}}</li>
+                <li>{{food[3]}}</li>
+            </ul>
+        </div>
+    </body>
+    <!-- vue2.x版本的开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <script>
+        // 这是简介的对象渲染实例
+        var app = new Vue({
+            // el是挂载点，原理上和css的选择器是一样的
+            // 可以选择id，或者类，或者标签类型作为筛选器
+            // 但是推荐使用id
+            el:'#app',
+            // data → 这个实例中定义的属性，类似理解成成员属性
+            data: {
+                // 可以是字符串
+                message: ' 孟宪东很帅！',
+                // 也可是对象
+                school:{
+                    name: '孟宪东',
+                    address: '东京都'
+                },
+                // 还可以是数组
+                food: ["红烧肉","鱼香肉丝","黄焖鸡","拉姐的平底锅"]
+            }
+        })
+    </script>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>04vue指令学习02</title>
+   
+</head>
+
+<body>
+    <div id="app">
+        <h2>通过计数器控制图片的显示与否，5个以上显示</h2>
+        <button @click="subFunc" class=".left-btn"> - </button>
+        <span class=".quantity-display"> {{count}} </span>
+        <button @click="addFunc" class=".right-btn"> + </button>
+        <p>
+            v-show的显示方法：
+            <!-- 学习点1 ：v-show
+            控制元素是否显示的标签，本质是style的display属性。因此无论显示与否，元素都在
+            其内部的值会被解析为bool型，因此，无论是bool变量，还是判断表达式，都可以写在内部 -->
+            <img src="https://static.redhat.com/libs/redhat/brand-assets/2/corp/logo--on-dark.svg" height="50px"
+                 v-show="count>=5">
+        </p>
+
+        <p>
+            v-if的显示方法：
+            <!-- 学习点1 ：v-if
+            条件渲染。
+            虽然实际效果和v-show类似，都是画面的显示与否，但是v-if直接控制元素的创建和销毁
+            !! 频繁切换显示的元素，适合v-show，减少dom树访问带来的性能开支。
+            反之，要么显示，要么隐藏的元素。为了减少页面上多余的元素创建，可以使用v-if -->
+            <img src="https://static.redhat.com/libs/redhat/brand-assets/2/corp/logo--on-dark.svg" height="50px"
+                 v-show="count>=5">
+        </p>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            count: 0,
+        },
+        methods: {
+            addFunc: function () {
+                this.count++;
+            },
+
+            subFunc: function () {
+                this.count--;
+            }
+        },
+    })
+</script>
+
+</html>

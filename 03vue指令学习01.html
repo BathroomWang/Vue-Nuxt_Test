@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>vue指令学习01</title>
+    </head>
+
+    <body>
+        <div id="app">
+            <!-- !学习点1：v-text
+            设置标签的内容，纯文本形式，无法解析html标签
+            v-text和插值表达式是一样的，只是插值表达式无法放进标签内
+            因此，v-text也支持字符串拼接，简单表达式 -->
+            <h3 v-text="message + '补充内容'"></h3>
+            <h3 style="color:blueviolet;" v-text="info"></h3>
+
+            <!-- 学习点2：v-html
+            也是设置内容，但是和v-text不同，可以解析并渲染html的标签
+            等同于HTML原生的innerHTML指令 -->
+            <p v-html="html"></p>
+
+            <!-- 学习点3：v-on
+            简写为@，为元素绑定事件 -->
+            <input type="button" value="事件绑定" v-on:click="func1">
+            <input type="button" value="事件绑定简写" @click="func1">
+            <input type="button" value="双击事件" @dblclick="func2">
+
+        </div>
+    </body>
+
+    <!-- vue2.x版本的开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <script>
+        var app = new Vue({
+            el:"#app",
+            data:{
+                message: "案例是这里！",
+                info:"hello！",
+                html: "<h2 style='color:blueviolet;' >v-html可以解析标签！</h2>"
+            },
+            methods: {
+                func1:function(){
+                     alert("事件绑定成功！");
+                },
+                func2:function(){
+                     alert(this.message);
+                     this.message = "成功在方法中改变data中属性的值！";
+                }
+            }
+        })
+    </script>
+</html>

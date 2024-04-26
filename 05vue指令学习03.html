@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vuez指令学习03</title>
+</head>
+<body>
+    <div id="app">
+        <h2>针对v-if-else的学习</h2>
+        <hr>
+        <!-- v-if和v-else，以及v-else-if
+        可以配合使用，其原理就是任何语言中的条件判断格式
+        需要注意，v-else和v-else-if不能单独存在，也必须紧挨着上面的if判断条件，中间不能被其他元素隔开
+        不要求所有的条件判断都是同一种标签元素 -->
+        <p v-if="gender == 1">性别：男</p>
+        <p v-else>性别：女</p>
+        <hr>
+        <span v-if="score >= 90">成绩等级A：做得好！</span>
+        <span v-else-if="score >= 75">成绩等级B：继续努力！</span>
+        <h2 v-else-if="score >= 60">成绩等级C：得加油！</h2>
+        <p v-else>成绩等级D：算了哥，算了。</p>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            gender:2,
+            score:80
+        },
+        methods: {
+            
+        },
+    })
+</script>
+</html>
