@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>综合练习：记事本</title>
+    <style>
+        #app {
+      text-align: center;
+    }
+    #box01 {
+      width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Input */
+    #input {
+      width: calc(100% - 100px); /* 80px 是按钮的宽度和按钮的右边距 */
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    /* List */
+    #box02 ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    /* List Item */
+    #box02 ul li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px;
+      margin-bottom: 5px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+
+    /* Button */
+    button {
+      height: 26px;
+      border: none;
+      border-radius: 3px;
+      background-color: #f44336;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Total and Clear */
+    .total-and-clear {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="box01">
+          <h1 style="color: coral;font-family:Microsoft Yahei Light">记 事 本</h1>
+          <br>
+          <input id="input" type="text" v-model="newTodo"> 
+          <button @click="addTodo()" style="height: 30px;">加入记事本</button>
+    
+          <div id="box02">
+            <ul>
+              <li v-for="(todo, index) in todoList" >
+                {{index + 1}}. {{todo}} &nbsp;&nbsp;&nbsp;&nbsp;
+                <button @click="deleteThing(index)">×</button>
+              </li>
+            </ul>
+          </div>
+          <br>
+          <div class="total-and-clear">
+            <span>合计：{{todoList.length}}条</span>
+            <button @click="clearAll()">清空列表</button>
+          </div>
+        </div>
+      </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            //输入的新内容的双重绑定
+            newTodo:"",
+            //todoList数组
+            todoList:[
+                       "打扫房间",
+                       "做一顿黄焖鸡",
+                       "给妈妈打电话",
+                       "健身1小时"
+                    ],
+        },
+        methods: {
+            addTodo:function(){
+                //首先检查输入的内容是否合法，本次检查因为没有特定要求，因此只做是否为空字符串检测
+                if (this.newTodo !== "") {
+                    //将新的字符串加入todolist
+                    this.todoList.push(this.newTodo);
+                    //这一步可以帮用户清空输入表单。免除手动清除
+                    this.newTodo = "";
+                }
+            },
+            deleteThing:function(index){
+                this.todoList.splice(index,1);
+            },
+            clearAll:function(){
+                //将数组清空的方法之一，最简单好用
+                this.todoList = [];
+            }
+        }
+    })
+</script>
+</html>

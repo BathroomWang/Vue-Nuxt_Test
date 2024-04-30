@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-for学习</title>
+</head>
+<body>
+    <div id="app">
+        <!-- v-for是循环渲染的指令
+        格式为(item, index) in 可以循环的对象，其中item是元素，index是索引
+        不需要index的时候，可以省略，简洁写作 item in 对象
+        可循环对象包括不限于数组，列表，对标，数字.... -->
+        <h2>实例1，小黑水果店</h2>
+        <ul>
+            <li v-for="item in fruitsArr">
+                {{item}}
+            </li>
+        </ul>
+        <br>
+        <!-- item可以被标签的属性访问到 -->
+        <h2>实例2，图片批量显示</h2>
+        <ul>
+            <li v-for="(item, index) in imgUrlArr">
+                <img :src="item" alt="">
+            </li>
+        </ul>
+        <h2>实例3，书籍管理：对数组元素的删除&key标识</h2>
+        <!-- v-for的完整写法，需要后面的:key="某个标识"
+             其作用是给循环的项添加唯一标识。方便vue进行列表项的正确排序和复用 
+             对于vue来说，如果不加key,（以li为例）则每个li都一样，并不独特，此时会触发v-for的默认行为→原地修改元素，即保留从第一个开始的对应数量个li，然后做内部元素修改
+             而加了key，（以li为例）就会删除指定key的那个li
+             推荐和元素绑定的，不会变化的字符串或者数字作为key
+             !不推荐使用index，因为index随着元素数量而改变-->
+        <ul>
+            <li v-for="(book, index) in booksList" :key="book.id">
+                <span>{{'书籍id：'+book.id}}</span>
+                <span>{{book.name}}</span>
+                <span>{{book.author}}</span>
+                <button @click="deleteBook(book.id)">删除</button>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            imgUrlArr:[ "./img/dance-moves.gif",
+                        "./img/tom-tom-and-jerry.gif",
+                        "./img/touhou-bad-apple.gif"],
+
+            fruitsArr:["苹果",
+                       "香蕉",
+                       "西瓜"],
+
+            booksList:[ {id:1, name:'《红楼梦》', author:'曹雪芹'},
+                        {id:2, name:'《西游记》', author:'吴承恩'},
+                        {id:3, name:'《水浒传》', author:'施耐庵'},
+                        {id:4, name:'《三国演义》', author:'罗贯中'} ]
+        },
+        methods: {
+            deleteBook:function(id){
+                //console.log(id);
+                /* 关于js数组如何删除指定index位置元素的方法：
+                  1.splice方法：arr.splice(index,1) → index是删除的起始下标，后面int是删除几个元素，可以为0
+                  2.filter方法：arr.filter(条件) → filter返回一个新数组，且不影响原数组。（）中方筛选元素的条件，删除时可以让条件！==要删除的元素
+                 */
+                // !留意下面两个写法
+                //this.booksList.splice(id-1,1);
+                this.booksList = this.booksList.filter(item => item.id !== id);
+            }
+        }
+    })
+</script>
+</html>

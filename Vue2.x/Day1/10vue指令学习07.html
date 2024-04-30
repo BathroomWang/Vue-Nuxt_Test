@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-model指令：双向绑定</title>
+</head>
+<body>
+    <div id="app">
+        <!-- 
+            ·v-model被称作是数据和视图的双向绑定
+            ·是指通过v-model指令在视图上绑定的数据（通常设置在input表单中），改变视图上的数据，vue实例中的数据会变。
+             同时，改变vue实例里对应数据的值，视图上的数据也会改变
+            ·好处是可以快速获取或者设置表单元素的内容，在sbumit和reset的时候，非常方便得到数值
+         -->
+        用户名：<input type="text" v-model="userName" ><br>
+        密码：<input type="text" v-model="password"><br>
+        <input type="button" value="点击让用户名变成小黑" @click="changeUname()">
+        <h3>用户是{{userName}}，密码是{{password}}</h3>
+        <input type="button" value="登录" @click="login()">
+        <input type="button" value="清空" @click="reset()">
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            userName:"",
+            password:""
+        },
+        methods: {
+            changeUname:function(){
+                this.userName = "小黑";
+            },
+            login:function(){
+                alert(this.userName + ","+ this.password);
+            },
+            reset:function(){
+                this.userName = "";
+                this.password = "";
+            }
+        }
+    })
+</script>
+</html>
