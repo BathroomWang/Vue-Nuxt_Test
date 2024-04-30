@@ -3,13 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>04vue指令学习02</title>
+    <title>v-on事件绑定和v-show/v-if的初步学习</title>
    
 </head>
 
 <body>
     <div id="app">
         <h2>通过计数器控制图片的显示与否，5个以上显示</h2>
+        <p>方法1：v-on绑定的是内联语句，简单来说就是直接对值修改</p>
+        <button @click="count--" class=".left-btn"> - </button>
+        <span class=".quantity-display"> {{count}} </span>
+        <button @click="count++" class=".right-btn"> + </button>
+        <hr>
+        <p>方法2：v-on绑定的是方法（函数）时：</p>
         <button @click="subFunc" class=".left-btn"> - </button>
         <span class=".quantity-display"> {{count}} </span>
         <button @click="addFunc" class=".right-btn"> + </button>
@@ -50,7 +56,7 @@
 
             subFunc: function () {
                 this.count--;
-            }
+            },
         },
     })
 </script>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通过按钮控制图片切换显示</title>
+</head>
+<body>
+    <!-- 第1步：制作html盒子，一个img，两个按钮，准备一系列图片的url，添加到vue实例中的新规数组中
+         第2步： 动态的设置img的src，则需要v-bind指令改变标签属性的值
+                点击按钮切换，则需要v-on事件绑定，事件是切换src
+                src如何切换？ → 通过数组的下标，调用对应的url 
+         第3步：修正数组索引越界的error：
+                两个思路，要么在方法里规定合法的最大最小index。要么通过v-show在数组最大最小时隐藏对应方向的按钮  -->
+
+    <div id="app">
+        <input type="button" :value="last" v-show="count>0" @click="lastPage()"><br><br>
+        <img :src="imgUrlArr[count]" alt=""><br><br>
+        <input type="button" :value="next" v-show="count<imgUrlArr.length -1" @click="nextPage()">
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            imgUrlArr:[ "./img/dance-moves.gif",
+                        "./img/tom-tom-and-jerry.gif",
+                        "./img/touhou-bad-apple.gif"],
+
+            imgTitleArr:["你被骗了！",
+                         "小时候最喜欢的一集",
+                         "越共探头"],
+            count:0,
+            next:"下一张",
+            last:"上一张"
+        },
+        methods: {
+            nextPage:function(){
+                if(this.count < this.imgUrlArr.length -1 ){
+                    this.count++;
+                }
+            },
+            lastPage:function(){
+                if(this.count > 0){
+                    this.count--;
+                }
+            },
+        },
+    })
+</script>
+</html>
