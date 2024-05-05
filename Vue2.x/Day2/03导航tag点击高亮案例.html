@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航的tag点击高亮案例</title>
+    <style>
+        .box {
+            height: 30px;
+            width: 250px;
+            padding-left: 1%;
+            padding-top: 2px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            display: inline-block;
+            margin-right: 10px; /* 设置相邻元素之间的间距 */
+        }
+        
+        /* 点击该tag时高亮的css */
+        .active {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- v-bind操作class的案例
+        可以方便快捷的设定或者改变标签身上的class -->
+    <div id="app">
+        <h2>导航的tag点击高亮案例</h2>
+        <!-- 首先制作html和简单的css部分，css是当点击了对应的超连接后，背景颜色变为红色，字体变为白色 -->
+        <div class="box">
+            <ul>
+                <li v-for="(tag, index) in tagList" :key="tag.id" >
+                   <a href="#" :class="{active:index == activeIndex }" @click="changeCssFun(index)">{{tag.name}}</a> 
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            tagList:[
+                     {id:1,name:'校园春色'},
+                     {id:2,name:'日韩精品'},
+                     {id:3,name:'国产自拍'},
+                        ],
+            activeIndex:-1,
+        },
+        methods: {
+            changeCssFun:function(_index){
+                //需求是点击对应的a标签时，变色 → 追加active类
+                //之前点击过的回到 → 删除active类
+                console.log(_index);
+                //因为以对象的形式控制class，后面返回的是表达式，
+                //因此我们可以用自己身上的index和我们点击后记录的activeIndex之间的相等关系
+                this.activeIndex = _index;
+        }
+    }
+    })
+</script>
+</html>

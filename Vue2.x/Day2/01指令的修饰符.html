@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指令的修饰符</title>
+</head>
+<body>
+    <!-- 通过指令后面加"."和一些后缀指令，实现代码的的简化
+    后缀指令封装了一些vue开发团队认为常用的功能。
+    例如：v-on:keyup识别任何按键抬起，但如果是keyup.enter则只监听回车键
+         v-model.number → 转数字 -->
+    <div id="app">
+        <h2>案例1：指定按键弹起（enter）的监听 → @keyup.enter</h2>
+        <!-- v-model.trim → 去除首尾的空格 -->
+        <input type="text" v-model.trim="inputMsg" @keyup.enter="showIt()"> 按下回车键确定，trim删除首尾空格
+        <br>
+        <input type="text" v-model="inputMsg" @keyup="showIt02($event)"> 按下回车键确定的拆解代码
+        <h2>提交的内容是：<span v-if="isShow">{{inputMsg}}</span></h2>
+        <hr>
+
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            inputMsg:"",
+            isShow:false,
+        },
+        methods: {
+           showIt:function(){
+            this.isShow = true;
+           },
+           //通过得到事件对象的函数，我们可以模仿keyup.enter的逻辑
+           //即对一个任意键弹起的事件，进行一个当前键位的判定，就可以实现指定键弹起
+           showIt02:function(e){
+            if (e.key == "Enter") {
+                console.log(e.key);
+                this.isShow = true;
+            }
+           },
+        }
+    })
+</script>
+</html>

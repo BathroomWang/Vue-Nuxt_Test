@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-model应用于其他表单元素的场景</title>
+</head>
+<body>
+    <div id="app">
+        <h2>v-model绑定input之外的表单元素案例——小黑学习网</h2>
+        姓名：<input type="text" v-model="userName"><br><br>
+
+        <!-- ! 单选框绑定的值，可以理解成同一组单选框中value的值（但是会将对应的checked改成true） -->
+        性别：<input v-model="gender" type="radio" name="gender" value="0">男
+                <input v-model="gender" type="radio" name="gender" value="1">女 <br><br>
+
+        <!-- checkbox通过v-model绑定的值，是当前自身的checked情况，也就是一个布尔值 -->
+        是否单身：<input type="checkbox" name="single" v-model="isSingle"> <br><br>
+
+        <!-- select的和v-model双向绑定的值是其自身的value值
+                这值是此时正选中的option的value值 -->
+        所在城市：<select name="" v-model="cityId">
+                    <option value="">--</option>
+                    <option value="0">东京</option>
+                    <option value="1">松户</option>
+                    <option value="2">东久留米</option>
+                    </select>
+        <br><br>
+
+        自我介绍：<br>
+                <textarea name="" cols="30" rows="10" v-model="intro"></textarea>
+                <br>
+
+        <button @click="outputMsg()">立即注册</button>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            userName:"",
+            isSingle:true,
+            gender:'1',
+            cityId:'2',
+            intro:"Hello!",
+        },
+        methods: {
+           outputMsg:function(){
+            alert("我是" + this.userName + "，我的性别是" + this.gender +
+                "，我的单身情况是"+ this.isSingle + "，我住在" + this.cityId +
+                "，我想对你说：" + this.intro);
+           }
+        }
+    })
+</script>
+</html>

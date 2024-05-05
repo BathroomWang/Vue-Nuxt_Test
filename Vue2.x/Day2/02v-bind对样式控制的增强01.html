@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-bind操作class</title>
+    <style>
+        .box{
+            height: 200px;
+            width: 200px;
+            border: 2px solid black;
+        }
+        .pink{
+            background-color: pink;
+        }
+        .big{
+            border: 5px solid black;
+        }
+    </style>
+</head>
+<body>
+    <!-- v-bind操作class的案例
+        可以方便快捷的设定或者改变标签身上的class -->
+    <div id="app">
+        <h2>根据bool对象切换class,适用于几种样式切换的场景</h2>
+        <div class="box" :class="{pink:isPink,big:!isPink}"></div><br>
+        <button @click="switchFunc">点下切换样式</button>
+        <hr>
+        <h2>根据数组切换class，适用于批量增删class的场景</h2>
+        <div class="box" :class="['pink','big']"></div>
+    </div>
+    
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            switch:1,
+            isPink:true,
+        },
+        methods: {
+           switchFunc:function(){
+            this.isPink = !this.isPink;
+           }
+        }
+    })
+</script>
+</html>

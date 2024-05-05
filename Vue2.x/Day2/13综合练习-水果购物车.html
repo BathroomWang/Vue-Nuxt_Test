@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水果购物车</title>
+    <style>
+        #app {
+            margin-left: 30%;
+        }
+
+        #titleImg {
+            position: relative;
+            height: 150px;
+            width: 600px;
+
+            border: 1px solid #c4c4c4;
+            border-radius: 0px;
+
+            overflow: hidden;
+        }
+        .imgTop {
+            position: absolute;
+            top: -100px;
+            margin: 0;
+            padding: 0;
+            width: 600px;
+            object-fit: contain;
+        }
+        table {
+            width: 600px;
+            border-collapse: collapse;
+        }
+        th {
+            height: 50px;
+            border: 1px solid #D4D4D4   ;
+            background-color: #E3E3E3 ;
+            padding: 6px;
+        }
+        td {
+            height: 60px;
+            border: 1px solid #D4D4D4    ;
+            padding: 6px;
+            text-align: center;
+        }
+        #nothing {
+            color: #787575;
+        }
+        .active {
+            background-color: #D4D4D4;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="titleImg">
+            <img src="image\titleImg.jpg" alt="" class="imgTop">
+        </div>
+        <p>  🏠 / 购物车</p>
+        <table>
+            <thead>
+                <tr><th style="width: 80px;">选中</th> 
+                    <th style="width: 100px;">名称</th> 
+                    <th style="width: 100px;">单价</th> 
+                    <th style="width: 120px;">个数</th> 
+                    <th style="width: 80px;">小计</th> 
+                    <th style="width: 120px;">操作</th> 
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item, index) in fruitsList" :key="item.id" :class="{active:item.isCheck}">
+                    <td><input type="checkbox" v-model="item.isCheck"></td> 
+                    <td>{{item.name}}</td> 
+                    <td>{{item.price}}</td> 
+                    <td>
+                        <input type="button" value="-" @click="item.count >0 ?item.count-- : 0">
+                        {{item.count}}
+                        <input type="button" value="+" @click="item.count++">
+                    </td> 
+                    <td>{{item.price * item.count}}</td> 
+                    <td>
+                        <button @click="deleteFruit(item.id)">删除</button>
+                    </td> 
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr v-if="fruitsList.length === 0">
+                    <td colspan="6"> 
+                        <h2 id="nothing"> 🛒 空空如也，买点什么吧！</h2>
+                    </td>
+                </tr>
+                <tr v-else>
+                    <td colspan="6"> 
+                        <input type="checkbox" v-model="isAll">全选
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        总价：￥ {{totalPrice}} 元 &nbsp;&nbsp;
+                        <button> 结算 ({{total}}) </button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    //我们定义一个默认数组，防止本地存储被清空后，出现null引用问题
+    const defArr = [
+                {
+                    id:1001,
+                    name:'苹果',
+                    price:2.00,
+                    count:0,
+                    isCheck:false,
+                },
+                {
+                    id:1002,
+                    name:'香蕉',
+                    price:1.50,
+                    count:0,
+                    isCheck:false,
+                },
+                {
+                    id:1003,
+                    name:'西瓜',
+                    price:10.00,
+                    count:0,
+                    isCheck:false,
+                },
+                {
+                    id:1004,
+                    name:'芒果',
+                    price:6.00,
+                    count:0,
+                    isCheck:false,
+                }];
+    const app = new Vue({
+        el:'#app',
+        data:{
+            // fruitsList首先寻找本地持久化储存的数据，如果没有，则使用我们定义的默认数组
+            fruitsList: JSON.parse(localStorage.getItem('list')) || defArr
+        },
+        methods: {
+            //删除按钮的方法
+            deleteFruit(id){
+                this.fruitsList = this.fruitsList.filter(element => element.id !== id);
+            },
+        },
+        computed: {
+            isAll: {
+                get(){
+                    return this.fruitsList.every(element => element.isCheck);
+                },
+                set(bool){
+                    if (bool) {
+                        this.fruitsList.forEach(element => {
+                        element.isCheck = true;});
+                    }
+                    else{
+                        this.fruitsList.forEach(element => {
+                        element.isCheck = false;});
+                    }
+                }
+            },
+            total(){
+                let total = this.fruitsList.reduce(
+                                            (sum,element) => element.isCheck == true ? sum + element.count : sum
+                                            ,0 );
+                return total;
+            },
+            totalPrice(){
+                let totalP = this.fruitsList.reduce(
+                                            (sum,element) => element.isCheck == true ? sum + element.count * element.price : sum
+                                            ,0 );
+                return totalP;
+            }
+        },
+        //这部分是需求中的对页面数据的持久化
+        //因为我们实际上没有真正的后端和数据库，因此我们先将数据存储在本地的localStorage中
+        //储存是setItem,以键值对的形式，并注意将我们的对象编程json字符串
+        watch: {
+            fruitsList: {
+                deep:true,
+                handler(newValue) {
+                    localStorage.setItem('list',JSON.stringify(newValue));
+                }
+            },
+        },
+    })
+</script>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算属性VS方法求值</title>
+    <style>
+        table {
+            width: 40%;
+            border-collapse: collapse;
+        }
+        th {
+            border: 1px solid black;
+            background-color: burlywood;
+            padding: 6px;
+        }
+        td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+        <!-- 也许有人会说，通过方法求值，并返回结果，在结果上可以起到和计算属性一样的效果，那么二者的区别是什么？
+            1.计算属性求值，一旦得到值，就会纳入缓存中，该数据无论在页面上出现多少次的利用，都只计算第一次（其他调用直接通过缓存）
+                同样的，依赖属性发生改变，计算属性会进行一次新的运算，然后再加入缓存，因此改变依赖属性也是一次计算
+            2.而方法，则是每次每处调用，都是一次运算，没有缓存机制
+
+            这里我们通过计算属性和方法中的控制台打印执行次数来展示区别，我们进行了3处计算属性的调用,3处方法的调用 -->
+        <div id="app">
+            <h2>小黑的体育器材统计表</h2>
+            <table >
+                <tr><th>序号</th> <th>名称</th>  <th>数量</th> </tr>
+                <tr v-for="(item, index) in list" :key="item.id">
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.count}}</td>
+                </tr>
+            </table>
+            <h3>(计算属性)共计：{{total}} 个</h3>
+            <h3>(计算属性)共计：{{total}} 个</h3>
+            <h3>(计算属性)共计：{{total}} 个</h3>
+            
+            <h3>(方法)共计：{{totalFunc()}} 个</h3>
+            <h3>(方法)共计：{{totalFunc()}} 个</h3>
+            <h3>(方法)共计：{{totalFunc()}} 个</h3>
+        </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            list:[
+                  {id:1,name:'篮球',count:1},
+                  {id:2,name:'足球',count:3},
+                  {id:3,name:'乒乓球',count:10},
+                ],
+        },
+        methods: {
+            //作为对照组，我们用方法也实现同样的计算数据并返回功能
+            //可以从控制台打印看出，每次调用，都是一次新的计算，没有缓存，性能开销大
+            totalFunc() {
+                console.log("方法执行了！");
+                let total = this.list.reduce((sum,element) => sum + element.count,0 );
+                return total;
+            }
+        },
+        computed: {
+            //控制台可以看出，计算属性有缓存，每次计算，只会执行一次，后面无论被调用多少次，都不会再计算
+            //复用率高，性能开销小
+            total() {
+                console.log("计算属性执行了！")
+                let total = this.list.reduce((sum,element) => sum + element.count,0 )
+                return total
+            }
+        },
+    })
+</script>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算属性综合案例，成绩表</title>
+    <style>
+        table {
+            width: 40%;
+            border-collapse: collapse;
+        }
+        th {
+            border: 1px solid #D4D4D4   ;
+            background-color: #E3E3E3 ;
+            padding: 6px;
+        }
+        td {
+            border: 1px solid #D4D4D4    ;
+            padding: 6px;
+            text-align: center;
+        }
+        button {
+            height: 30px;
+            width: 60px;
+            border: 1px solid #D4D4D4;
+            border-radius: 4px;
+            background-color: #0199DF;
+            color: white;
+        }
+        /* 绑定成绩的td，成绩小于60该样式生效 */
+        .low {
+            color: red;
+            font-weight: bold;
+        }
+        /* 绑定一个tbody，在没有任何一条数据时被渲染 */
+        .noMsg {
+            color: #7A7A7A;
+        }
+    </style>
+</head>
+<body>
+    <!-- 计算属性的概念：基于现有的属性，计算出来的新属性。会随着已有属性的改变而变化 
+        声明在computed配置项之中 -->
+        <div id="app">
+            <h2>成绩表</h2>
+            科目：<input type="text" v-model.trim="major"><br><br>
+            分数：<input type="text" v-model.number="grade"><br><br>
+            <button @click="addMajor">添 加</button><br><br>
+            <table >
+                <tr><th style="width: 15%;">序号</th> <th>科目</th>  <th>成绩</th> <th>操作</th> </tr>
+
+                <!-- 这里通过v-if进行渲染判断，如果没有任何一条数据时，显示暂无数据。 -->
+                <tr v-if="this.list.length == 0">
+                    <td colspan="4" class="noMsg"> 暂无数据</td>
+                </tr>
+                <tr v-else v-for="(item, index) in list" :key="item.id">
+                    <td>{{index + 1}}</td>
+                    <td>{{item.name}}</td>
+                    <td :class="{low:item.count < 60}">{{item.count}}</td>
+                    <td><a href="#" @click="deleteMajor(item.id)">删除</a></td>
+                </tr>
+
+                <tfoot ><td colspan="4">总分：{{total}} &nbsp;&nbsp;&nbsp; 平均分：{{average}}</td></tfoot>
+            </table>
+        </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            list:[
+                  {id:1001,name:'语文',count:46},
+                  {id:1002,name:'英语',count:80},
+                  {id:1003,name:'数学',count:100},
+                ],
+            major:"",
+            grade:'',
+            majorId:1003,
+        },
+        methods: {
+            addMajor(){
+
+                //首先检查输入的合法性
+                if(this.major == "" || typeof this.grade !== 'number'){
+                    alert('请输入科目和成绩');
+                   
+                    //输入后输入框清空
+                    this.major = '';
+                    this.grade = '';
+                    return;
+                }
+                //虚假的设定一个有唯一性的id给他，实际情况会从其他地方拿值
+                this.majorId++;
+                this.list.push({id:this.majorId, name:this.major, count:this.grade});
+                //输入后输入框清空
+                this.major = '';
+                this.grade = '';
+            },
+            deleteMajor(id){
+                //记住js自带的filter方法，用于过滤出来数组中满足给定条件的项目
+                this.list = this.list.filter(element => element.id !== id);
+            },
+        },
+        //计算属性都被我们写在computed中
+        //虽然计算属性写作函数的形式，但是其实是属性，不是一个方法，使用的时候不能加（）
+        //
+        computed: {
+            total() {
+                let gradeSum = this.list.reduce((temp,element) => temp + element.count,0);
+                return gradeSum;
+            },
+            average() {
+
+                //数字型使用tofixed，选择保留的精确度
+                //多利用三元表达式，提升代码效率
+                return this.list.length > 0 ? (this.total / this.list.length).toFixed(2) : 0;
+            }
+        },
+    })
+</script>
+</html>

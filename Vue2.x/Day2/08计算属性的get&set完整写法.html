@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算属性的get/set方法</title>
+</head>
+<body>
+    <div id="app">
+        <h2>
+            姓：<input type="text" v-model="familyName"> + 名：<input type="text" v-model="firstName"> = {{fullName}}
+        </h2>
+        <button @click="changeName">改名为吕小布</button>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            familyName:"",
+            firstName:"",
+        },
+        methods: {
+            changeName(){
+                this.fullName = '吕小布';
+            },
+        },
+        computed: {
+            //完整的一个计算属性，是包括get和set两部分的，其作用也等于java中的get和set
+            //get方法等于简单写法的功能，是获取计算属性用的
+            //set方法是为计算属性再赋值时的功能，写法是计算属性 = 赋的值，然后通过set犯法的参数拿到这个值用于加工
+            //set场景使用的概率比较低
+            fullName: {
+                get() {
+                    return this.familyName + this.firstName;
+                },
+                set(value) {
+                    console.log(value);
+                    this.familyName = value.slice(0,1);
+                    this.firstName = value.slice(1);
+                }
+            }
+        },
+    })
+</script>
+</html>

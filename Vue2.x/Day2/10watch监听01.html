@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>watch监听的使用</title>
+    <style>
+
+    .container {
+        display: flex;
+        height: 100vh;
+    }
+    .box {
+        display: flex;
+        width: 600px;
+        height: 200px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-left: 10px;
+    }
+    .input-box {
+        flex: 1;
+        padding: 10px;
+        box-sizing: border-box;
+        resize: none;
+        border: none;
+        font-size: 16px;
+    }
+    .output-box {
+        flex:1;
+        padding: 10px;
+        box-sizing: border-box;
+        resize: none;
+        border: none;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        margin-left: 10px;
+    }
+    </style>
+</head>
+<body>
+        <div id="app">
+            <h2>翻译软件实现01：可以监听到输入数据的变化</h2>
+            <div class="container">
+                <div class="box">
+                    <textarea class="input-box" placeholder="请输入.." v-model="inputMsg"></textarea>
+                    <textarea class="output-box" readonly>{{inputMsg}}</textarea>
+                </div>
+            </div>
+        </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            inputMsg:'',
+        },
+        methods: {
+
+        },
+        //最简单的watch监听属性变化，只需要以想要监听的data中的属性名为名字做一个方法
+        //有两个形参，前面的为变化后的值，后面的是变化前的值，但是oldvalue可以省略
+        //如果是监听某个对象的某个属性的变化，则要 '对象名.属性名'(){},
+        //因为js要求对象名不能带符号，所以这时只能拿''引起来
+        watch:{
+            inputMsg (newValue,oldValue){
+                console.log("变化为：" + newValue + " 以前是：" + oldValue);
+            },
+        },
+    })
+</script>
+</html>

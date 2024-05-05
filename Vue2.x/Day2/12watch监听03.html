@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度监听-watch监听的完整写法</title>
+    <style>
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .box {
+            display: flex;
+            width: 600px;
+            height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-left: 10px;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: none;
+            border: none;
+            font-size: 16px;
+        }
+
+        .output-box {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: none;
+            border: none;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h2>翻译软件03：追加翻译语言的选择</h2>
+        <div>
+            选择翻译后的语言：
+            <select v-model="transObj.lang">
+                <option value="">--</option>
+                <option value="cht">繁体中文</option>
+                <option value="jp">日文</option>
+                <option value="en">英文</option>
+                <option value="ru">俄文</option>
+            </select>
+        </div>
+        <br>
+        <div class="container">
+            <div class="box">
+                <textarea class="input-box" placeholder="请输入.." v-model="transObj.inputMsg"></textarea>
+                <textarea class="output-box" readonly>{{translation}}</textarea>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<!-- 引入 Axios 库 -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- 引入 可以转换成MD5的库 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<!-- 使用ajax要先引入jquery的库 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        data: {
+            transObj: {
+                inputMsg: '',
+                lang: '',
+            },
+            translation: '',
+            delayTime: '',
+        },
+        methods: {
+            async baiduTrans(transObj) {
+                //这部分是百度翻译通译api调用时必须的项目
+                //注册完成后，appid和key可在个人中心找到，salt为随机数因子，任何生成随机数的方法都可以
+                //最终将appid，翻译的文本，随机数因子和key进行拼接，然后制作成MD5码
+                var appid = '20240502002040650';
+                var key = '4bZ2qOCuveKXNWaTJuIK';
+                var salt = new Date().getTime();
+                var text = transObj.inputMsg;
+                var sign = CryptoJS.MD5(appid + text + salt + key).toString();
+
+                //这里使用ajax的理由也很有趣。
+                //虽然我们一开始想使用axios，但是因为传统的axios基于promise，而根据跨域，同源的问题，axios不能正常工作
+                //经过查询，使用jsonp格式，可以绕过同源限制，ajax原生支持发送jsonp格式，故而我们选择了ajax
+                if (text.length === 0) {
+                    return;
+                }
+                try {
+                    const response = await $.ajax({
+                        url: 'http://api.fanyi.baidu.com/api/trans/vip/translate',
+                        type: 'GET',
+                        dataType: 'jsonp',
+                        data: {
+                            q: text,
+                            appid: appid,
+                            salt: salt,
+                            from: 'auto',
+                            to: transObj.lang,
+                            sign: sign
+                        }
+                    });
+                    console.log(response.trans_result[0].dst);
+                    app.translation = response.trans_result[0].dst;
+                } catch (error) {
+                    console.error('翻译失败', error);
+                }
+            }
+        },
+        //如果我们想同时对一个对象中的多个属性进行监听，按照上节所学的办法，我们需要在watch中加入多个监听事件
+        //然而，watch的完整写法，允许我们通过deep属性，选择是否进行深度监听。深度监听＝这个对象中任何属性改变就监听
+        //完整的watch写法，首先不是方法，而是一个对象。实现监听逻辑的方法则写在内不能的handler方法中
+        watch: {
+            transObj: {
+                deep: true,   //深度监视
+                immediate:true,  //立刻执行 => 是否在画面初期渲染后就执行第一次监视个handler方法
+                //此时，newvalue是一个变化的对象，可以通过.得到需要的属性
+                handler(newValue) {
+                    clearTimeout(this.delayTime);
+                    this.delayTime = setTimeout(async () => {
+                        await this.baiduTrans(newValue);
+                    }, 500);
+                }
+            },
+
+        },
+    })
+</script>
+
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>watch监听的功能实现，以及百度翻译api引用</title>
+    <style>
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .box {
+            display: flex;
+            width: 600px;
+            height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-left: 10px;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: none;
+            border: none;
+            font-size: 16px;
+        }
+
+        .output-box {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: none;
+            border: none;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h2>翻译软件02：实现将任意语言翻译成中文</h2>
+        <div class="container">
+            <div class="box">
+                <textarea class="input-box" placeholder="请输入.." v-model="inputMsg"></textarea>
+                <textarea class="output-box" readonly>{{translation}}</textarea>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<!-- 引入 Axios 库 -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- 引入 可以转换成MD5的库 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<!-- 使用ajax要先引入jquery的库 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        data: {
+            inputMsg: '',
+            translation: '',
+            delayTime:'',
+        },
+        methods: {
+            async baiduTrans(text) {
+                //这部分是百度翻译通译api调用时必须的项目
+                //注册完成后，appid和key可在个人中心找到，salt为随机数因子，任何生成随机数的方法都可以
+                //最终将appid，翻译的文本，随机数因子和key进行拼接，然后制作成MD5码
+                var appid = '20240502002040650';
+                var key = '4bZ2qOCuveKXNWaTJuIK';
+                var salt = new Date().getTime();
+                var sign = CryptoJS.MD5(appid + text + salt + key).toString();
+
+                //这里使用ajax的理由也很有趣。
+                //虽然我们一开始想使用axios，但是因为传统的axios基于promise，而根据跨域，同源的问题，axios不能正常工作
+                //经过查询，使用jsonp格式，可以绕过同源限制，ajax原生支持发送jsonp格式，故而我们选择了ajax
+                try {
+                    const response = await $.ajax({
+                        url: 'http://api.fanyi.baidu.com/api/trans/vip/translate',
+                        type: 'GET',
+                        dataType: 'jsonp',
+                        data: {
+                            q: text,
+                            appid: appid,
+                            salt: salt,
+                            from: 'auto',
+                            to: 'zh',
+                            sign: sign
+                        }
+                    });
+                    console.log(response.trans_result[0].dst);
+                    app.translation = response.trans_result[0].dst;
+                } catch (error) {
+                    console.error('翻译失败', error);
+                }
+            }
+        },
+        //最简单的watch监听属性变化，只需要以想要监听的data中的属性名为名字做一个方法
+        //有两个形参，前面的为变化后的值，后面的是变化前的值，但是oldvalue可以省略
+        //如果是监听某个对象的某个属性的变化，则要 '对象名.属性名'(){}，因为js要求对象名不能带符号，所以这时只能拿''引起来
+        watch: {
+            inputMsg(newValue) {
+                //console.log(newValue);
+            
+                //接下来，为了解决每次改变newValue的值，都会调用一次方法的问题，我们制作一个防抖装置
+                //何为防抖？ 即为了避免每次输入都会进行一次执行，加大性能开销，我们设定必须在等待多久时间后没有新的操作，才执行逻辑‘
+
+                //这是清除延时器当前延时的方法，配合下面的延时器一起使用，构成一个防抖
+                clearTimeout(this.delayTime);
+
+                //setTimeout是防抖的延时器部分，它允许当前的操作等待一定时间之后再做
+                //检查方法我们可以看到，这个方法可以返回一个number，即已经经过的时间
+                //我们定义一个变量接受这个值，并在上方的clearTimeout中，让每次更新都清楚延时，最终实现只有一段时间不操作才执行的效果，只要操作就会重置延时
+                //这里我们将变化的值，传给method配置项里一个名为百度翻译的方法
+                this.delayTime = setTimeout(async() => {
+                    await this.baiduTrans(newValue);
+                }, 500);
+                
+            },
+        },
+    })
+</script>
+
+</html>
